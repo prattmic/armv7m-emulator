@@ -2,29 +2,41 @@ package main
 
 import (
 	"./core"
+	"flag"
 	"fmt"
 	"io"
 	"os"
 )
 
+var execute = flag.Bool("execute", false, "Execute instructions in addition to decoding")
+
 func main() {
-	if len(os.Args) != 2 {
+	flag.Parse()
+
+	if flag.NArg() != 1 {
 		fmt.Printf("ARMv7-M Emulator\n")
 		fmt.Printf("usage: %s binary\n", os.Args[0])
+		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
-	binary := os.Args[1]
+	binary := flag.Arg(0)
 	file, err := os.Open(binary)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)
 	}
 
-	//regs := new(core.Registers)
+	regs := new(core.Registers)
 	b := make([]byte, 2, 2)
 	addr := 0
 	var upper *core.FetchedInstr16 = nil
+
+	if *execute {
+		fmt.Printf("Register state:\n")
+		regs.Print()
+		fmt.Printf("\n")
+	}
 
 	for {
 		n, err := file.Read(b)
@@ -63,6 +75,13 @@ func main() {
 		}
 
 		fmt.Printf("\t%#v\n", instr)
+
+		if *execute {
+			instr.Execute(regs)
+			fmt.Printf("Register state:\n")
+			regs.Print()
+			fmt.Printf("\n")
+		}
 	}
 
 	file.Close()
