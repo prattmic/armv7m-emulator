@@ -23,6 +23,7 @@ func main() {
 
 	//regs := new(core.Registers)
 	b := make([]byte, 2, 2)
+	addr := 0
 	var upper *core.FetchedInstr16 = nil
 
 	for {
@@ -42,22 +43,26 @@ func main() {
 		fetched16 := core.FetchedInstr16((uint16(b[1]) << 8) | uint16(b[0]))
 
 		if upper != nil {
+			fmt.Printf(" %v", fetched16)
 			fetched = upper.Extend(fetched16)
 			upper = nil
 		} else {
 			fetched = fetched16
+			fmt.Printf("%x:\t%v", addr, fetched)
 		}
+
+		addr += len(b)
 
 		instr, err := fetched.Decode()
 		if err == core.IncompleteInstruction {
 			upper = &fetched16
 			continue
 		} else if err != nil {
-			fmt.Printf("%s (instr = %v)\n", err, fetched)
+			fmt.Printf("\t%s\n", err)
 			continue
 		}
 
-		fmt.Printf("%#v\n", instr)
+		fmt.Printf("\t%#v\n", instr)
 	}
 
 	file.Close()
