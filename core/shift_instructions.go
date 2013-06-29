@@ -15,7 +15,7 @@ func LslImm16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LslImm) Execute(regs *Registers) {
-	value := regs.R[instr.Rn]
+	value := regs.R[instr.Rm]
 	shift_n := uint8(instr.Imm)
 
 	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.S)

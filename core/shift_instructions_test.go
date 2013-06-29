@@ -43,8 +43,8 @@ func TestExecuteLslImm(t *testing.T) {
 			expected: Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r7, r4, #7
 		{instr: LslImm{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 1, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0}}},
+			regs:     Registers{R: GeneralRegs{3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{3, 0, 0, 0, 1, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r0, r0, #1
 		{instr: LslImm{Rd: 0, Rm: 0, Imm: 1, S: true, Rn: 0},
 			regs:     Registers{R: GeneralRegs{0xc0000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
