@@ -15,12 +15,7 @@ func TestIdentifyLslImm(t *testing.T) {
 		{FetchedInstr16(0xffff), false},
 	}
 
-	instr_type := reflect.TypeOf(LslImm{})
-
-	for _, test := range cases {
-		instr, err := test.instr.Decode()
-		verify_identify(t, test, instr_type, instr, err)
-	}
+    test_identify(t, cases, reflect.TypeOf(LslImm{}))
 }
 
 func TestDecodeLslImm16(t *testing.T) {
@@ -33,10 +28,7 @@ func TestDecodeLslImm16(t *testing.T) {
 		{FetchedInstr16(0x01e7), LslImm{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0}},
 	}
 
-	for _, test := range cases {
-		actual := LslImm16(test.instr)
-		verify_decode(t, test, actual)
-	}
+    test_decode(t, cases, LslImm16)
 }
 
 func TestIdentifyLslReg(t *testing.T) {
@@ -49,12 +41,7 @@ func TestIdentifyLslReg(t *testing.T) {
 		{FetchedInstr16(0xffff), false},
 	}
 
-	instr_type := reflect.TypeOf(LslReg{})
-
-	for _, test := range cases {
-		instr, err := test.instr.Decode()
-		verify_identify(t, test, instr_type, instr, err)
-	}
+    test_identify(t, cases, reflect.TypeOf(LslReg{}))
 }
 
 func TestDecodeLslReg16(t *testing.T) {
@@ -67,10 +54,7 @@ func TestDecodeLslReg16(t *testing.T) {
         {FetchedInstr16(0x40bc), LslReg{Rd: 4, Rn: 4, Rm: 7, Imm: 0, S: true}},
 	}
 
-	for _, test := range cases {
-		actual := LslReg16(test.instr)
-		verify_decode(t, test, actual)
-	}
+    test_decode(t, cases, LslReg16)
 }
 
 func TestIdentifyLsrImm(t *testing.T) {
@@ -84,12 +68,7 @@ func TestIdentifyLsrImm(t *testing.T) {
 		{FetchedInstr16(0xffff), false},
 	}
 
-	instr_type := reflect.TypeOf(LsrImm{})
-
-	for _, test := range cases {
-		instr, err := test.instr.Decode()
-		verify_identify(t, test, instr_type, instr, err)
-	}
+    test_identify(t, cases, reflect.TypeOf(LsrImm{}))
 }
 
 func TestDecodeLsrImm16(t *testing.T) {
@@ -102,10 +81,7 @@ func TestDecodeLsrImm16(t *testing.T) {
 		{FetchedInstr16(0x09e7), LsrImm{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0}},
 	}
 
-	for _, test := range cases {
-		actual := LsrImm16(test.instr)
-		verify_decode(t, test, actual)
-	}
+    test_decode(t, cases, LsrImm16)
 }
 
 func TestIdentifyLsrReg(t *testing.T) {
@@ -119,12 +95,7 @@ func TestIdentifyLsrReg(t *testing.T) {
 		{FetchedInstr16(0xffff), false},
 	}
 
-	instr_type := reflect.TypeOf(LsrReg{})
-
-	for _, test := range cases {
-		instr, err := test.instr.Decode()
-		verify_identify(t, test, instr_type, instr, err)
-	}
+    test_identify(t, cases, reflect.TypeOf(LsrReg{}))
 }
 
 func TestDecodeLsrReg16(t *testing.T) {
@@ -137,8 +108,5 @@ func TestDecodeLsrReg16(t *testing.T) {
         {FetchedInstr16(0x40fc), LsrReg{Rd: 4, Rn: 4, Rm: 7, Imm: 0, S: true}},
 	}
 
-	for _, test := range cases {
-		actual := LsrReg16(test.instr)
-		verify_decode(t, test, actual)
-	}
+    test_decode(t, cases, LsrReg16)
 }
