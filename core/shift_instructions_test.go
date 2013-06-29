@@ -84,7 +84,6 @@ func TestDecodeLslReg16(t *testing.T) {
 	test_decode(t, cases, LslReg16)
 }
 
-// TODO: Update PSR
 func TestExecuteLslReg(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsl r0, r0, r0
@@ -104,6 +103,14 @@ func TestExecuteLslReg(t *testing.T) {
 		{instr: LslReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
 			regs:     Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
 			expected: Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
+		// lsl r0, r0, r1
+		{instr: LslReg{Rd: 0, Rn: 0, Rm: 1, Imm: 0, S: true},
+			regs:     Registers{R: GeneralRegs{0xc0000000, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0x80000000, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true, N: true}}},
+		// lsl r0, r0, r1
+		{instr: LslReg{Rd: 0, Rn: 0, Rm: 1, Imm: 0, S: true},
+			regs:     Registers{R: GeneralRegs{0x80000000, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true, Z: true}}},
 	}
 
 	test_execute(t, cases)

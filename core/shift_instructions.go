@@ -35,7 +35,10 @@ func LslReg16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LslReg) Execute(regs *Registers) {
-	regs.R[instr.Rd] = regs.R[instr.Rn] << uint8(regs.R[instr.Rm])
+	value := regs.R[instr.Rn]
+	shift_n := uint8(regs.R[instr.Rm])
+
+	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.S)
 }
 
 /* LSR - Logical Shift Right (immediate)
