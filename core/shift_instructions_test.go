@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-func TestLsl(t *testing.T) {
+func TestIdentifyLsl(t *testing.T) {
 	cases := []IdentifyCase{
-		{FetchedInstr16(0x0000), true},
-		{FetchedInstr16(0x01e7), true},
-		{FetchedInstr16(0x09e7), false},
+		{FetchedInstr16(0x0000), true}, // lsl r0, r0, #0
+		{FetchedInstr16(0x01e7), true}, // lsl r7, r4, #7
+		{FetchedInstr16(0x09e7), false},// lsr r7, r4, #7
 		{FetchedInstr16(0xffff), false},
 	}
 
@@ -21,10 +21,13 @@ func TestLsl(t *testing.T) {
 	}
 }
 
-func TestLslImm16(t *testing.T) {
+func TestDecodeLslImm16(t *testing.T) {
 	cases := []DecodeCase{
+        // lsl r0, r0, #0
 		{FetchedInstr16(0x0000), Lsl{Rd: 0, Rm: 0, Imm: 0, S: true, Rn: 0}},
+        // lsl r0, r0, #1
 		{FetchedInstr16(0x0040), Lsl{Rd: 0, Rm: 0, Imm: 1, S: true, Rn: 0}},
+        // lsl r7, r4, #7
 		{FetchedInstr16(0x01e7), Lsl{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0}},
 	}
 
@@ -34,12 +37,12 @@ func TestLslImm16(t *testing.T) {
 	}
 }
 
-func TestLsr(t *testing.T) {
+func TestIdentifyLsr(t *testing.T) {
 	cases := []IdentifyCase{
-		{FetchedInstr16(0x0800), true},
-		{FetchedInstr16(0x09e7), true},
-		{FetchedInstr16(0x01e7), false},
-		{FetchedInstr16(0x0000), false},
+		{FetchedInstr16(0x0800), true}, // lsr r0, r0, #0
+		{FetchedInstr16(0x09e7), true}, // lsr r7, r4, #7
+		{FetchedInstr16(0x01e7), false},// lsl r7, r4, #7
+		{FetchedInstr16(0x0000), false},// lsl r0, r0, #0
 		{FetchedInstr16(0xffff), false},
 	}
 
@@ -51,10 +54,13 @@ func TestLsr(t *testing.T) {
 	}
 }
 
-func TestLsrImm16(t *testing.T) {
+func TestDecodeLsrImm16(t *testing.T) {
 	cases := []DecodeCase{
+        // lsr r0, r0, #0
 		{FetchedInstr16(0x0800), Lsr{Rd: 0, Rm: 0, Imm: 0, S: true, Rn: 0}},
+        // lsr r0, r0, #1
 		{FetchedInstr16(0x0840), Lsr{Rd: 0, Rm: 0, Imm: 1, S: true, Rn: 0}},
+        // lsr r7, r4, #7
 		{FetchedInstr16(0x09e7), Lsr{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0}},
 	}
 
