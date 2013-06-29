@@ -1,6 +1,8 @@
-.arch armv7e-m
-.cpu cortex-m4
+.syntax divided
 .thumb
+
+.arch armv7e-m
+.cpu cortex-m3
 
 .global _start
 _start:

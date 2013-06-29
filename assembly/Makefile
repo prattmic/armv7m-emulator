@@ -4,7 +4,7 @@ CC := $(CROSS_COMPILE)gcc
 OBJCOPY := $(CROSS_COMPILE)objcopy
 OBJDUMP := $(CROSS_COMPILE)objdump
 
-CFLAGS += -T link.ld -mcpu=cortex-m3 -mthumb
+CFLAGS += -T link.ld -march=armv7-m -mcpu=cortex-m3 -mthumb
 CFLAGS += -nostdlib
 
 all:
