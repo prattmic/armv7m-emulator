@@ -18,8 +18,9 @@ type Ipsr struct {
 }
 
 type Epsr struct {
-	T      bool
-	ICI_IT uint16
+	T   bool
+	ICI uint16
+	IT  uint16
 }
 
 type Registers struct {
@@ -64,7 +65,8 @@ func (regs Registers) Print() {
 		booltoi(regs.Apsr.N), booltoi(regs.Apsr.Z), booltoi(regs.Apsr.C),
 		booltoi(regs.Apsr.V), booltoi(regs.Apsr.Q), regs.Apsr.GE)
 
-	fmt.Printf("EPSR: T = %d ICI_IT = 0x%x\n", booltoi(regs.Epsr.T), regs.Epsr.ICI_IT)
+	fmt.Printf("EPSR: T = %d ICI = 0x%x IT = 0x%x\n", booltoi(regs.Epsr.T),
+		regs.Epsr.ICI, regs.Epsr.IT)
 
 	fmt.Printf("IPSR: %d\n", regs.Ipsr.ExcpNum)
 }
