@@ -15,7 +15,25 @@ func LslImm16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LslImm) Execute(regs *Registers) {
-	regs.R[instr.Rd] = regs.R[instr.Rm] << instr.Imm
+	var result uint32
+	var carry_out bool
+
+	value := regs.R[instr.Rn]
+	shift_n := uint8(instr.Imm)
+
+	if shift_n == 0 {
+		result, carry_out = value, regs.Apsr.C
+	} else {
+		result, carry_out = LSL_C(value, shift_n)
+	}
+
+	regs.R[instr.Rd] = result
+
+	if instr.S {
+		regs.Apsr.N = (result & 0x80000000) != 0
+		regs.Apsr.Z = (result) == 0
+		regs.Apsr.C = carry_out
+	}
 }
 
 /* LSL - Logical Shift Left (register)
