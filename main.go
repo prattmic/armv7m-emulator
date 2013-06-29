@@ -3,60 +3,62 @@ package main
 import (
 	"./core"
 	"fmt"
+	"io"
+	"os"
 )
 
 func main() {
-	var instr core.DecodedInstr
+	if len(os.Args) != 2 {
+		fmt.Printf("ARMv7-M Emulator\n")
+		fmt.Printf("usage: %s binary\n", os.Args[0])
+		os.Exit(1)
+	}
 
-	regs := new(core.Registers)
-
-	regs.R[0] = 1
-
-	fmt.Printf("%#v\n", regs)
-
-	unknown_instr1 := core.FetchedInstr16(0xf140)
-	unknown_instr2 := core.FetchedInstr16(0x0)
-
-	instr, err := unknown_instr1.Decode()
+	binary := os.Args[1]
+	file, err := os.Open(binary)
 	if err != nil {
-		if err == core.IncompleteInstruction {
-			unknown_instr := unknown_instr1.Extend(unknown_instr2)
-			instr, err = unknown_instr.Decode()
-			if err != nil {
-				fmt.Printf("full instr: %s\n", err)
-			}
-		} else {
+		fmt.Printf("%s\n", err)
+		os.Exit(1)
+	}
+
+	//regs := new(core.Registers)
+	b := make([]byte, 2, 2)
+	var upper *core.FetchedInstr16 = nil
+
+	for {
+		n, err := file.Read(b)
+		if err == io.EOF {
+			break
+		} else if err != nil {
 			fmt.Printf("%s\n", err)
+			os.Exit(1)
+		} else if n != len(b) {
+			fmt.Printf("not enough bytes read\n")
+			os.Exit(1)
 		}
+
+		var fetched core.FetchedInstr
+
+		fetched16 := core.FetchedInstr16((uint16(b[1]) << 8) | uint16(b[0]))
+
+		if upper != nil {
+			fetched = upper.Extend(fetched16)
+			upper = nil
+		} else {
+			fetched = fetched16
+		}
+
+		instr, err := fetched.Decode()
+		if err == core.IncompleteInstruction {
+			upper = &fetched16
+			continue
+		} else if err != nil {
+			fmt.Printf("%s (instr = %v)\n", err, fetched)
+			continue
+		}
+
+		fmt.Printf("%#v\n", instr)
 	}
 
-	fmt.Printf("%T%+v\n", instr, instr)
-
-	// lsl r0, r0, #1
-	unknown_instr1 = core.FetchedInstr16(0x0040)
-
-	instr, err = unknown_instr1.Decode()
-	if err != nil {
-		fmt.Printf("%s\n", err)
-	}
-
-	fmt.Printf("%T%+v\n", instr, instr)
-
-	instr.Execute(regs)
-
-	fmt.Printf("%#v\n", regs)
-
-	// lsr r0, r0, #1
-	unknown_instr1 = core.FetchedInstr16(0x0840)
-
-	instr, err = unknown_instr1.Decode()
-	if err != nil {
-		fmt.Printf("%s\n", err)
-	}
-
-	fmt.Printf("%T%+v\n", instr, instr)
-
-	instr.Execute(regs)
-
-	fmt.Printf("%#v\n", regs)
+	file.Close()
 }
