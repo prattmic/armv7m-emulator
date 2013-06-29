@@ -2,9 +2,29 @@ package core
 
 type GeneralRegs [16]uint32
 
+type Apsr struct {
+	N  bool
+	Z  bool
+	C  bool
+	V  bool
+	Q  bool
+	GE uint8
+}
+
+type Ipsr struct {
+	ExcpNum uint16
+}
+
+type Epsr struct {
+	T      bool
+	ICI_IT uint16
+}
+
 type Registers struct {
-	R   GeneralRegs
-	Psr uint32
+	R    GeneralRegs
+	Apsr Apsr
+	Ipsr Ipsr
+	Epsr Epsr
 }
 
 /* Special registers in r13-15 */
