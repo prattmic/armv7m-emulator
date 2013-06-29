@@ -16,8 +16,8 @@ const (
 	WORD_INSTR3     = 0xf800
 )
 
-var IncompleteInstruction = errors.New("Only first halfword of word instruction decoded.")
-var UndefinedInstruction = errors.New("Instruction not defined.")
+var ErrIncompleteInstruction = errors.New("Only first halfword of word instruction decoded.")
+var ErrUndefinedInstruction = errors.New("Instruction not defined.")
 
 type FetchedInstr interface {
 	Decode() (DecodedInstr, error)
@@ -34,7 +34,7 @@ func (instr FetchedInstr16) Decode() (DecodedInstr, error) {
 	/* Check if this is the beginning of a 32-bit instruction */
 	switch raw_instr & WORD_INSTR_MASK {
 	case WORD_INSTR1, WORD_INSTR2, WORD_INSTR3:
-		return nil, IncompleteInstruction
+		return nil, ErrIncompleteInstruction
 	}
 
 	/* Check for a matching opcode */
@@ -45,7 +45,7 @@ func (instr FetchedInstr16) Decode() (DecodedInstr, error) {
 		}
 	}
 
-	return nil, UndefinedInstruction
+	return UndefinedInstr{}, ErrUndefinedInstruction
 }
 
 func (instr FetchedInstr16) Uint32() uint32 {
@@ -69,7 +69,7 @@ func (instr FetchedInstr32) Decode() (DecodedInstr, error) {
 		}
 	}
 
-	return nil, UndefinedInstruction
+	return UndefinedInstr{}, ErrUndefinedInstruction
 }
 
 func (instr FetchedInstr32) Uint32() uint32 {

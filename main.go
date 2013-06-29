@@ -66,7 +66,7 @@ func main() {
 		addr += len(b)
 
 		instr, err := fetched.Decode()
-		if err == core.IncompleteInstruction {
+		if err == core.ErrIncompleteInstruction {
 			upper = &fetched16
 			continue
 		} else if err != nil {
