@@ -1,7 +1,9 @@
 package core
 
+type GeneralRegs [16]uint32
+
 type Registers struct {
-    R [16]uint32
+    R GeneralRegs
     Psr uint32
 }
 
