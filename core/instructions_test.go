@@ -19,6 +19,15 @@ type DecodeCase struct {
 	decoded DecodedInstr
 }
 
+// Execute given instruction on
+// set of registers, with expected
+// result
+type ExecuteCase struct {
+    instr DecodedInstr
+    regs Registers
+    expected Registers
+}
+
 func test_identify(t *testing.T, cases []IdentifyCase, instr_type reflect.Type) {
 	for _, test := range cases {
 		instr, err := test.instr.Decode()
@@ -31,6 +40,16 @@ func test_decode(t *testing.T, cases []DecodeCase, decode DecodeFunc) {
 		actual := decode(test.instr)
 		verify_decode(t, test, actual)
 	}
+}
+
+func test_execute(t *testing.T, cases []ExecuteCase) {
+    for _, test := range cases {
+        test.instr.Execute(&test.regs)
+
+        if test.regs != test.expected {
+            t.Errorf("instr: %#v, expected %#v, got %#v", test.instr, test.expected, test.regs)
+        }
+    }
 }
 
 func verify_identify(t *testing.T, test IdentifyCase, instr_type reflect.Type, identified DecodedInstr, err error) {
