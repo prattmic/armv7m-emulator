@@ -10,7 +10,7 @@ func MovImm16(instr FetchedInstr) DecodedInstr {
 	Imm := raw_instr & 0xff
 	Rd := uint8((raw_instr >> 8) & 0x7)
 
-	return MovImm{Rd: Rd, Rm: 0, Rn: 0, Imm: Imm, S: true}
+	return MovImm{Rd: Rd, Rm: 0, Rn: 0, Imm: Imm, setflags: NOT_IT}
 }
 
 func (instr MovImm) Execute(regs *Registers) {
@@ -18,7 +18,7 @@ func (instr MovImm) Execute(regs *Registers) {
 
 	regs.R[instr.Rd] = result
 
-	if instr.S {
+	if instr.setflags == ALWAYS || (instr.setflags == NOT_IT && !regs.InITBlock()) {
 		regs.Apsr.N = (result & 0x80000000) != 0
 		regs.Apsr.Z = result == 0
 	}

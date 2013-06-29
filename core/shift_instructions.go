@@ -11,14 +11,14 @@ func LslImm16(instr FetchedInstr) DecodedInstr {
 	Rm := uint8((raw_instr >> 3) & 0x7)
 	Imm := (raw_instr >> 6) & 0x1f
 
-	return LslImm{Rd: Rd, Rm: Rm, Imm: Imm, S: true, Rn: 0}
+	return LslImm{Rd: Rd, Rm: Rm, Rn: 0, Imm: Imm, setflags: NOT_IT}
 }
 
 func (instr LslImm) Execute(regs *Registers) {
 	value := regs.R[instr.Rm]
 	shift_n := uint8(instr.Imm)
 
-	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.S)
+	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.setflags)
 }
 
 /* LSL - Logical Shift Left (register)
@@ -31,14 +31,14 @@ func LslReg16(instr FetchedInstr) DecodedInstr {
 	Rdn := uint8(raw_instr & 0x7)
 	Rm := uint8((raw_instr >> 3) & 0x7)
 
-	return LslReg{Rd: Rdn, Rn: Rdn, Rm: Rm, Imm: 0, S: true}
+	return LslReg{Rd: Rdn, Rn: Rdn, Rm: Rm, Imm: 0, setflags: NOT_IT}
 }
 
 func (instr LslReg) Execute(regs *Registers) {
 	value := regs.R[instr.Rn]
 	shift_n := uint8(regs.R[instr.Rm])
 
-	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.S)
+	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.setflags)
 }
 
 /* LSR - Logical Shift Right (immediate)
@@ -52,14 +52,14 @@ func LsrImm16(instr FetchedInstr) DecodedInstr {
 	Rm := uint8((raw_instr >> 3) & 0x7)
 	Imm := (raw_instr >> 6) & 0x1f
 
-	return LsrImm{Rd: Rd, Rm: Rm, Imm: Imm, S: true, Rn: 0}
+	return LsrImm{Rd: Rd, Rm: Rm, Rn: 0, Imm: Imm, setflags: NOT_IT}
 }
 
 func (instr LsrImm) Execute(regs *Registers) {
 	value := regs.R[instr.Rm]
 	shift_n := uint8(instr.Imm)
 
-	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.S)
+	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.setflags)
 }
 
 /* LSR - Logical Shift Right (register)
@@ -72,12 +72,12 @@ func LsrReg16(instr FetchedInstr) DecodedInstr {
 	Rdn := uint8(raw_instr & 0x7)
 	Rm := uint8((raw_instr >> 3) & 0x7)
 
-	return LsrReg{Rd: Rdn, Rn: Rdn, Rm: Rm, Imm: 0, S: true}
+	return LsrReg{Rd: Rdn, Rn: Rdn, Rm: Rm, Imm: 0, setflags: NOT_IT}
 }
 
 func (instr LsrReg) Execute(regs *Registers) {
 	value := regs.R[instr.Rn]
 	shift_n := uint8(regs.R[instr.Rm])
 
-	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.S)
+	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.setflags)
 }

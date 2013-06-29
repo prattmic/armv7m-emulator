@@ -49,6 +49,14 @@ func (regs Registers) Pc() uint32 {
 	return regs.R[PC]
 }
 
+func (regs Registers) InITBlock() bool {
+	return (regs.Epsr.IT & 0xf) != 0
+}
+
+func (regs Registers) LastInITBlock() bool {
+	return (regs.Epsr.IT & 0xf) == 0x8
+}
+
 func (regs Registers) Print() {
 	for i := 0; i < 16; i++ {
 		if i != 0 {

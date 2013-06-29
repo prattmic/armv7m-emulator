@@ -6,10 +6,18 @@ type DecodedInstr interface {
 	Execute(*Registers)
 }
 
+type SetFlags uint8
+
+const (
+	ALWAYS SetFlags = iota
+	NEVER
+	NOT_IT // Only set condition codes if not in IT block
+)
+
 type InstrFields struct {
-	S   bool
-	Imm uint32
-	Rd  uint8
-	Rm  uint8
-	Rn  uint8
+	setflags SetFlags
+	Imm      uint32
+	Rd       uint8
+	Rm       uint8
+	Rn       uint8
 }

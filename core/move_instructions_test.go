@@ -21,9 +21,9 @@ func TestIdentifyMovImm(t *testing.T) {
 func TestDecodeMovImm16(t *testing.T) {
 	cases := []DecodeCase{
 		// mov r0, #0
-		{instr: FetchedInstr16(0x2000), decoded: MovImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, S: true}},
+		{instr: FetchedInstr16(0x2000), decoded: MovImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT}},
 		// mov r7, #0x45
-		{instr: FetchedInstr16(0x2745), decoded: MovImm{Rd: 7, Rm: 0, Rn: 0, Imm: 0x45, S: true}},
+		{instr: FetchedInstr16(0x2745), decoded: MovImm{Rd: 7, Rm: 0, Rn: 0, Imm: 0x45, setflags: NOT_IT}},
 	}
 
 	test_decode(t, cases, MovImm16)
@@ -32,11 +32,11 @@ func TestDecodeMovImm16(t *testing.T) {
 func TestExecuteMovImm(t *testing.T) {
 	cases := []ExecuteCase{
 		// mov r0, #0
-		{instr: MovImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, S: true},
+		{instr: MovImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT},
 			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
 			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
 		// mov r7, #0x45
-		{instr: MovImm{Rd: 7, Rm: 0, Rn: 0, Imm: 0x45, S: true},
+		{instr: MovImm{Rd: 7, Rm: 0, Rn: 0, Imm: 0x45, setflags: NOT_IT},
 			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true}},
 			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0x45, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true}}},
 	}

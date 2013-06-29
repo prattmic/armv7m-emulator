@@ -3,7 +3,7 @@ package core
 type ShiftFunc func(uint32, uint8) (uint32, bool)
 
 /* Perform shift operation, updating condition codes */
-func ShiftOp(regs *Registers, value uint32, shift_n uint8, S bool, do_shift ShiftFunc) uint32 {
+func ShiftOp(regs *Registers, value uint32, shift_n uint8, setflags SetFlags, do_shift ShiftFunc) uint32 {
 	var result uint32
 	var carry_out bool
 
@@ -13,7 +13,7 @@ func ShiftOp(regs *Registers, value uint32, shift_n uint8, S bool, do_shift Shif
 		result, carry_out = do_shift(value, shift_n)
 	}
 
-	if S {
+	if setflags == ALWAYS || (setflags == NOT_IT && !regs.InITBlock()) {
 		regs.Apsr.N = (result & 0x80000000) != 0
 		regs.Apsr.Z = (result) == 0
 		regs.Apsr.C = carry_out
@@ -23,8 +23,8 @@ func ShiftOp(regs *Registers, value uint32, shift_n uint8, S bool, do_shift Shif
 }
 
 /* Perform LSL instruction, updating condition codes */
-func LSL(regs *Registers, value uint32, shift_n uint8, S bool) uint32 {
-	return ShiftOp(regs, value, shift_n, S, LSL_C)
+func LSL(regs *Registers, value uint32, shift_n uint8, setflags SetFlags) uint32 {
+	return ShiftOp(regs, value, shift_n, setflags, LSL_C)
 }
 
 /* Left shift value by a positive amount */
@@ -40,8 +40,8 @@ func LSL_C(value uint32, amount uint8) (uint32, bool) {
 }
 
 /* Perform LSR instruction, updating condition codes */
-func LSR(regs *Registers, value uint32, shift_n uint8, S bool) uint32 {
-	return ShiftOp(regs, value, shift_n, S, LSR_C)
+func LSR(regs *Registers, value uint32, shift_n uint8, setflags SetFlags) uint32 {
+	return ShiftOp(regs, value, shift_n, setflags, LSR_C)
 }
 
 /* Right shift value by a positive amount */
