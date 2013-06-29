@@ -36,16 +36,16 @@ func TestExecuteLslImm(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsl r0, r0, #0
 		{instr: LslImm{Rd: 0, Rm: 0, Imm: 0, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r0, r0, #1
 		{instr: LslImm{Rd: 0, Rm: 0, Imm: 1, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r7, r4, #7
 		{instr: LslImm{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 1, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 1, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0}}},
 	}
 
 	test_execute(t, cases)
@@ -82,21 +82,21 @@ func TestExecuteLslReg(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsl r0, r0, r0
 		{instr: LslReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r7, r7, r7
 		{instr: LslReg{Rd: 7, Rn: 7, Rm: 7, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 0x800, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 0x800, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r4, r4, r7
 		{instr: LslReg{Rd: 4, Rn: 4, Rm: 7, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 2, 3, 4, 0x500, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 2, 3, 4, 0x500, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r0, r0, r0
 		// The bottom byte of the source register is the amount to shift by
 		{instr: LslReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 	}
 
 	test_execute(t, cases)
@@ -134,16 +134,16 @@ func TestExecuteLsrImm(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsr r0, r0, #0
 		{instr: LsrImm{Rd: 0, Rm: 0, Imm: 0, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsr r0, r0, #1
 		{instr: LsrImm{Rd: 0, Rm: 0, Imm: 1, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsr r7, r4, #7
 		{instr: LsrImm{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0x80, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0x80, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}}},
 	}
 
 	test_execute(t, cases)
@@ -181,17 +181,17 @@ func TestExecuteLsrReg(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsr r0, r0, r0
 		{instr: LsrReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r4, r4, r7
 		{instr: LsrReg{Rd: 4, Rn: 4, Rm: 7, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 2, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{1, 2, 3, 4, 1, 6, 7, 2, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 2, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{1, 2, 3, 4, 1, 6, 7, 2, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r0, r0, r0
 		// The bottom byte of the source register is the amount to shift by
 		{instr: LsrReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
-			regs:     Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0},
-			expected: Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Psr: 0x0}},
+			regs:     Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 	}
 
 	test_execute(t, cases)
