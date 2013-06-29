@@ -14,14 +14,14 @@ const (
 	PC = 15
 )
 
-func (regs *Registers) Lr() uint32 {
+func (regs Registers) Lr() uint32 {
 	return regs.R[LR]
 }
 
-func (regs *Registers) Sp() uint32 {
+func (regs Registers) Sp() uint32 {
 	return regs.R[SP]
 }
 
-func (regs *Registers) Pc() uint32 {
+func (regs Registers) Pc() uint32 {
 	return regs.R[PC]
 }
