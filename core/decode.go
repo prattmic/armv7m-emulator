@@ -53,7 +53,7 @@ func (instr FetchedInstr16) Uint32() uint32 {
 }
 
 func (instr FetchedInstr16) String() string {
-	return fmt.Sprintf("0x%.4x", uint16(instr))
+	return fmt.Sprintf("%.4x", uint16(instr))
 }
 
 /* Extend upper halfword of instruction with lower halfword to make 32-bit instruction */
@@ -77,5 +77,5 @@ func (instr FetchedInstr32) Uint32() uint32 {
 }
 
 func (instr FetchedInstr32) String() string {
-	return fmt.Sprintf("0x%.8x", uint32(instr))
+	return fmt.Sprintf("%.8x", uint32(instr))
 }
