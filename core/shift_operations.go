@@ -1,6 +1,6 @@
 package core
 
-type ShiftFunc func (uint32, uint8) (uint32, bool)
+type ShiftFunc func(uint32, uint8) (uint32, bool)
 
 /* Perform shift operation, updating condition codes */
 func ShiftOp(regs *Registers, value uint32, shift_n uint8, S bool, do_shift ShiftFunc) uint32 {
@@ -35,6 +35,21 @@ func LSL_C(value uint32, amount uint8) (uint32, bool) {
 
 	result := uint32(extended & 0xffffffff)
 	carry_out := (extended & 0x100000000) != 0
+
+	return result, carry_out
+}
+
+/* Perform LSR instruction, updating condition codes */
+func LSR(regs *Registers, value uint32, shift_n uint8, S bool) uint32 {
+	return ShiftOp(regs, value, shift_n, S, LSR_C)
+}
+
+/* Right shift value by a positive amount */
+func LSR_C(value uint32, amount uint8) (uint32, bool) {
+	/* The last bit to be carried out determines the carry */
+	carry_out := (value & (1 << (amount - 1))) != 0
+
+	result := value >> amount
 
 	return result, carry_out
 }

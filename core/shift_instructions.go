@@ -56,7 +56,10 @@ func LsrImm16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LsrImm) Execute(regs *Registers) {
-	regs.R[instr.Rd] = regs.R[instr.Rm] >> instr.Imm
+	value := regs.R[instr.Rm]
+	shift_n := uint8(instr.Imm)
+
+	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.S)
 }
 
 /* LSR - Logical Shift Right (register)
@@ -73,5 +76,8 @@ func LsrReg16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LsrReg) Execute(regs *Registers) {
-	regs.R[instr.Rd] = regs.R[instr.Rn] >> uint8(regs.R[instr.Rm])
+	value := regs.R[instr.Rn]
+	shift_n := uint8(regs.R[instr.Rm])
+
+	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.S)
 }

@@ -143,7 +143,6 @@ func TestDecodeLsrImm16(t *testing.T) {
 	test_decode(t, cases, LsrImm16)
 }
 
-// TODO: Update PSR
 func TestExecuteLsrImm(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsr r0, r0, #0
@@ -158,6 +157,10 @@ func TestExecuteLsrImm(t *testing.T) {
 		{instr: LsrImm{Rd: 7, Rm: 4, Imm: 7, S: true, Rn: 0},
 			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
 			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0x80, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}}},
+		// lsr r0, r0, #1
+		{instr: LsrImm{Rd: 0, Rm: 0, Imm: 1, S: true, Rn: 0},
+			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true, Z: true}}},
 	}
 
 	test_execute(t, cases)
@@ -190,13 +193,12 @@ func TestDecodeLsrReg16(t *testing.T) {
 	test_decode(t, cases, LsrReg16)
 }
 
-// TODO: Update PSR
 func TestExecuteLsrReg(t *testing.T) {
 	cases := []ExecuteCase{
 		// lsr r0, r0, r0
 		{instr: LsrReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
 			regs:     Registers{R: GeneralRegs{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
-			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
+			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true, Z: true}}},
 		// lsl r4, r4, r7
 		{instr: LsrReg{Rd: 4, Rn: 4, Rm: 7, Imm: 0, S: true},
 			regs:     Registers{R: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 2, 0, 0, 0, 0, 0, 0, 0, 0}},
@@ -206,6 +208,10 @@ func TestExecuteLsrReg(t *testing.T) {
 		{instr: LsrReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
 			regs:     Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
 			expected: Registers{R: GeneralRegs{0x100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
+		// lsr r0, r0, r1
+		{instr: LsrReg{Rd: 0, Rn: 0, Rm: 0, Imm: 0, S: true},
+			regs:     Registers{R: GeneralRegs{0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{R: GeneralRegs{0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
 	}
 
 	test_execute(t, cases)
