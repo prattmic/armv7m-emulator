@@ -23,9 +23,9 @@ type DecodeCase struct {
 // set of registers, with expected
 // result
 type ExecuteCase struct {
-    instr DecodedInstr
-    regs Registers
-    expected Registers
+	instr    DecodedInstr
+	regs     Registers
+	expected Registers
 }
 
 func test_identify(t *testing.T, cases []IdentifyCase, instr_type reflect.Type) {
@@ -38,18 +38,20 @@ func test_identify(t *testing.T, cases []IdentifyCase, instr_type reflect.Type) 
 func test_decode(t *testing.T, cases []DecodeCase, decode DecodeFunc) {
 	for _, test := range cases {
 		actual := decode(test.instr)
-		verify_decode(t, test, actual)
+		if actual != test.decoded {
+			t.Errorf("instr: %v, expected %#v, got %#v", test.instr, test.decoded, actual)
+		}
 	}
 }
 
 func test_execute(t *testing.T, cases []ExecuteCase) {
-    for _, test := range cases {
-        test.instr.Execute(&test.regs)
+	for _, test := range cases {
+		test.instr.Execute(&test.regs)
 
-        if test.regs != test.expected {
-            t.Errorf("instr: %#v, expected %#v, got %#v", test.instr, test.expected, test.regs)
-        }
-    }
+		if test.regs != test.expected {
+			t.Errorf("instr: %#v, expected %#v, got %#v", test.instr, test.expected, test.regs)
+		}
+	}
 }
 
 func verify_identify(t *testing.T, test IdentifyCase, instr_type reflect.Type, identified DecodedInstr, err error) {
@@ -57,25 +59,19 @@ func verify_identify(t *testing.T, test IdentifyCase, instr_type reflect.Type, i
 		if test.instr_valid {
 			t.Errorf("instr: %v, err: %v", test.instr, err)
 		} else {
-            /* An error is OK, because this wasn't considered a valid instruction */
+			/* An error is OK, because this wasn't considered a valid instruction */
 			return
 		}
 	}
 
-    identified_type := reflect.TypeOf(identified)
-    types_match := instr_type == identified_type
+	identified_type := reflect.TypeOf(identified)
+	types_match := instr_type == identified_type
 
-    if test.instr_valid && !types_match {
-        t.Errorf("instr: %v, decoded type: %T, expected type: %v", test.instr, identified, instr_type)
-    }
+	if test.instr_valid && !types_match {
+		t.Errorf("instr: %v, decoded type: %T, expected type: %v", test.instr, identified, instr_type)
+	}
 
-    if !test.instr_valid && types_match {
-        t.Errorf("instr: %v, decoded type: %T, expected not type: %v", test.instr, identified, instr_type)
-    }
-}
-
-func verify_decode(t *testing.T, test DecodeCase, actual DecodedInstr) {
-	if actual != test.decoded {
-		t.Errorf("instr: %v, expected %#v, got %#v", test.instr, test.decoded, actual)
+	if !test.instr_valid && types_match {
+		t.Errorf("instr: %v, decoded type: %T, expected not type: %v", test.instr, identified, instr_type)
 	}
 }
