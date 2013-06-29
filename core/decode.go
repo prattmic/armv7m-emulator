@@ -40,6 +40,7 @@ func (instr FetchedInstr16) Decode() (DecodedInstr, error) {
     /* Check for a matching opcode */
     for opcode, decode := range InstrOpcodes16 {
         if opcode.Match(instr) {
+            /* Instruction identified, now decode it */
             return decode(instr), nil
         }
     }
