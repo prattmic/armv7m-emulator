@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 type GeneralRegs [13]uint32
 
@@ -144,40 +147,47 @@ func (regs *Registers) ALUWritePC(addr uint32) {
 	regs.BranchWritePC(addr)
 }
 
-func (regs Registers) Print() {
+func (regs Registers) Pretty() string {
+	var b bytes.Buffer
 	var i uint8
 
 	for i = 0; i <= 12; i++ {
 		if i != 0 {
 			if (i % 4) == 0 {
-				fmt.Printf("\n")
+				fmt.Fprintf(&b, "\n")
 			} else {
-				fmt.Printf("\t")
+				fmt.Fprintf(&b, "\t")
 			}
 		}
-		fmt.Printf("R%-2d = %#x", i, regs.R(i))
+		fmt.Fprintf(&b, "R%-2d = %#x", i, regs.R(i))
 	}
 
-	fmt.Printf("\tSP (R13) = %#x", regs.R(SP))
-	fmt.Printf("\tLR (R14) = %#x", regs.R(LR))
-	fmt.Printf("\tPC (R15) = %#x\n", regs.R(PC))
+	fmt.Fprintf(&b, "\tSP (R13) = %#x", regs.R(SP))
+	fmt.Fprintf(&b, "\tLR (R14) = %#x", regs.R(LR))
+	fmt.Fprintf(&b, "\tPC (R15) = %#x\n", regs.R(PC))
 
-	fmt.Printf("MSP = %#x\tPSP = %#x\n", regs.Msp(), regs.Psp())
+	fmt.Fprintf(&b, "MSP = %#x\tPSP = %#x\n", regs.Msp(), regs.Psp())
 
-	fmt.Printf("BASEPRI = %d\tPRIMASK = %d\tFAULTMASK = %d\n", regs.Basepri,
+	fmt.Fprintf(&b, "BASEPRI = %d\tPRIMASK = %d\tFAULTMASK = %d\n", regs.Basepri,
 		booltoi(regs.Primask), booltoi(regs.Faultmask))
 
-	fmt.Printf("CONTROL: nPRIV = %d SPSEL = %d FPCA = %d\n", booltoi(regs.Control.Npriv),
+	fmt.Fprintf(&b, "CONTROL: nPRIV = %d SPSEL = %d FPCA = %d\n", booltoi(regs.Control.Npriv),
 		uint8(regs.Control.Spsel), booltoi(regs.Control.Fpca))
 
-	fmt.Printf("APSR: N = %d Z = %d C = %d V = %d Q = %d GE = %d\n",
+	fmt.Fprintf(&b, "APSR: N = %d Z = %d C = %d V = %d Q = %d GE = %d\n",
 		booltoi(regs.Apsr.N), booltoi(regs.Apsr.Z), booltoi(regs.Apsr.C),
 		booltoi(regs.Apsr.V), booltoi(regs.Apsr.Q), regs.Apsr.GE)
 
-	fmt.Printf("EPSR: T = %d ICI = %#x IT = %#x\n", booltoi(regs.Epsr.T),
+	fmt.Fprintf(&b, "EPSR: T = %d ICI = %#x IT = %#x\n", booltoi(regs.Epsr.T),
 		regs.Epsr.ICI, regs.Epsr.IT)
 
-	fmt.Printf("IPSR: EXCPNUM = %d\n", regs.Ipsr.ExcpNum)
+	fmt.Fprintf(&b, "IPSR: EXCPNUM = %d\n", regs.Ipsr.ExcpNum)
+
+	return b.String()
+}
+
+func (regs Registers) Print() {
+	fmt.Print(regs.Pretty())
 }
 
 func booltoi(b bool) int {
