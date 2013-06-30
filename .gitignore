@@ -2,3 +2,4 @@ armv7m-emulator
 *.o
 *.bin
 *.dump
+tags
