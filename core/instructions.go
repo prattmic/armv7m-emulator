@@ -17,7 +17,7 @@ const (
 type InstrFields struct {
 	setflags SetFlags
 	Imm      uint32
-	Rd       uint8
-	Rm       uint8
-	Rn       uint8
+	Rd       RegIndex
+	Rm       RegIndex
+	Rn       RegIndex
 }

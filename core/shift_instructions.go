@@ -7,8 +7,8 @@ type LslImm InstrFields
 func LslImm16(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
-	Rd := uint8(raw_instr & 0x7)
-	Rm := uint8((raw_instr >> 3) & 0x7)
+	Rd := RegIndex(raw_instr & 0x7)
+	Rm := RegIndex((raw_instr >> 3) & 0x7)
 	Imm := (raw_instr >> 6) & 0x1f
 
 	if Imm == 0 {
@@ -34,8 +34,8 @@ type LslReg InstrFields
 func LslReg16(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
-	Rdn := uint8(raw_instr & 0x7)
-	Rm := uint8((raw_instr >> 3) & 0x7)
+	Rdn := RegIndex(raw_instr & 0x7)
+	Rm := RegIndex((raw_instr >> 3) & 0x7)
 
 	return LslReg{Rd: Rdn, Rn: Rdn, Rm: Rm, Imm: 0, setflags: NOT_IT}
 }
@@ -55,8 +55,8 @@ type LsrImm InstrFields
 func LsrImm16(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
-	Rd := uint8(raw_instr & 0x7)
-	Rm := uint8((raw_instr >> 3) & 0x7)
+	Rd := RegIndex(raw_instr & 0x7)
+	Rm := RegIndex((raw_instr >> 3) & 0x7)
 	Imm := (raw_instr >> 6) & 0x1f
 
 	return LsrImm{Rd: Rd, Rm: Rm, Rn: 0, Imm: Imm, setflags: NOT_IT}
@@ -77,8 +77,8 @@ type LsrReg InstrFields
 func LsrReg16(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
-	Rdn := uint8(raw_instr & 0x7)
-	Rm := uint8((raw_instr >> 3) & 0x7)
+	Rdn := RegIndex(raw_instr & 0x7)
+	Rm := RegIndex((raw_instr >> 3) & 0x7)
 
 	return LsrReg{Rd: Rdn, Rn: Rdn, Rm: Rm, Imm: 0, setflags: NOT_IT}
 }

@@ -8,7 +8,7 @@ func MovImm16(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
 	Imm := raw_instr & 0xff
-	Rd := uint8((raw_instr >> 8) & 0x7)
+	Rd := RegIndex((raw_instr >> 8) & 0x7)
 
 	return MovImm{Rd: Rd, Rm: 0, Rn: 0, Imm: Imm, setflags: NOT_IT}
 }
@@ -28,10 +28,10 @@ func MovReg16T1(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
 	Rd := uint8(raw_instr & 0x7)
-	Rm := uint8((raw_instr >> 3) & 0xf)
+	Rm := RegIndex((raw_instr >> 3) & 0xf)
 	D := uint8((raw_instr >> 7) & 0x1)
 
-	d := (D << 3) | Rd
+	d := RegIndex((D << 3) | Rd)
 
 	return MovRegT1{Rd: d, Rm: Rm, Rn: 0, Imm: 0, setflags: NEVER}
 }
@@ -54,8 +54,8 @@ type MovRegT2 InstrFields
 func MovReg16T2(instr FetchedInstr) DecodedInstr {
 	raw_instr := instr.Uint32()
 
-	Rd := uint8(raw_instr & 0x7)
-	Rm := uint8((raw_instr >> 3) & 0x7)
+	Rd := RegIndex(raw_instr & 0x7)
+	Rm := RegIndex((raw_instr >> 3) & 0x7)
 
 	return MovRegT2{Rd: Rd, Rm: Rm, Rn: 0, Imm: 0, setflags: ALWAYS}
 }

@@ -6,6 +6,7 @@ import (
 )
 
 type GeneralRegs [13]uint32
+type RegIndex uint8
 
 type SPRegs [2]uint32
 type SPType uint8
@@ -64,12 +65,12 @@ type Registers struct {
 
 /* Special registers in r13-15 */
 const (
-	SP = 13
-	LR = 14
-	PC = 15
+	SP RegIndex = 13
+	LR RegIndex = 14
+	PC RegIndex = 15
 )
 
-func (regs Registers) R(i uint8) uint32 {
+func (regs Registers) R(i RegIndex) uint32 {
 	switch i {
 	default:
 		return regs.r[i]
@@ -83,7 +84,7 @@ func (regs Registers) R(i uint8) uint32 {
 	}
 }
 
-func (regs *Registers) SetR(i uint8, value uint32) {
+func (regs *Registers) SetR(i RegIndex, value uint32) {
 	switch i {
 	default:
 		regs.r[i] = value
@@ -149,7 +150,7 @@ func (regs *Registers) ALUWritePC(addr uint32) {
 
 func (regs Registers) Pretty() string {
 	var b bytes.Buffer
-	var i uint8
+	var i RegIndex
 
 	for i = 0; i <= 12; i++ {
 		if i != 0 {
@@ -195,5 +196,18 @@ func booltoi(b bool) int {
 		return 1
 	} else {
 		return 0
+	}
+}
+
+func (i RegIndex) String() string {
+	switch i {
+	default:
+		return fmt.Sprintf("r%d", i)
+	case SP:
+		return "sp"
+	case LR:
+		return "lr"
+	case PC:
+		return "pc"
 	}
 }
