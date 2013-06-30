@@ -15,10 +15,11 @@ func LslImm16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LslImm) Execute(regs *Registers) {
-	value := regs.R[instr.Rm]
+	value := regs.R(instr.Rm)
 	shift_n := uint8(instr.Imm)
 
-	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.setflags)
+	result := LSL(regs, value, shift_n, instr.setflags)
+	regs.SetR(instr.Rd, result)
 }
 
 /* LSL - Logical Shift Left (register)
@@ -35,10 +36,11 @@ func LslReg16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LslReg) Execute(regs *Registers) {
-	value := regs.R[instr.Rn]
-	shift_n := uint8(regs.R[instr.Rm])
+	value := regs.R(instr.Rn)
+	shift_n := uint8(regs.R(instr.Rm))
 
-	regs.R[instr.Rd] = LSL(regs, value, shift_n, instr.setflags)
+	result := LSL(regs, value, shift_n, instr.setflags)
+	regs.SetR(instr.Rd, result)
 }
 
 /* LSR - Logical Shift Right (immediate)
@@ -56,10 +58,11 @@ func LsrImm16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LsrImm) Execute(regs *Registers) {
-	value := regs.R[instr.Rm]
+	value := regs.R(instr.Rm)
 	shift_n := uint8(instr.Imm)
 
-	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.setflags)
+	result := LSR(regs, value, shift_n, instr.setflags)
+	regs.SetR(instr.Rd, result)
 }
 
 /* LSR - Logical Shift Right (register)
@@ -76,8 +79,9 @@ func LsrReg16(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr LsrReg) Execute(regs *Registers) {
-	value := regs.R[instr.Rn]
-	shift_n := uint8(regs.R[instr.Rm])
+	value := regs.R(instr.Rn)
+	shift_n := uint8(regs.R(instr.Rm))
 
-	regs.R[instr.Rd] = LSR(regs, value, shift_n, instr.setflags)
+	result := LSR(regs, value, shift_n, instr.setflags)
+	regs.SetR(instr.Rd, result)
 }

@@ -33,12 +33,12 @@ func TestExecuteMovImm(t *testing.T) {
 	cases := []ExecuteCase{
 		// mov r0, #0
 		{instr: MovImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
-			expected: Registers{R: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
+			regs:     Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{r: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
 		// mov r7, #0x45
 		{instr: MovImm{Rd: 7, Rm: 0, Rn: 0, Imm: 0x45, setflags: NOT_IT},
-			regs:     Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true}},
-			expected: Registers{R: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0x45, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true}}},
+			regs:     Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true}},
+			expected: Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0x45, 0, 0, 0, 0, 0}, Apsr: Apsr{C: true}}},
 	}
 
 	test_execute(t, cases)
@@ -72,20 +72,20 @@ func TestExecuteMovRegT1(t *testing.T) {
 	cases := []ExecuteCase{
 		// mov r0, r0
 		{instr: MovRegT1{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NEVER},
-			regs:     Registers{R: GeneralRegs{0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}},
-			expected: Registers{R: GeneralRegs{0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
+			regs:     Registers{r: GeneralRegs{0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}},
+			expected: Registers{r: GeneralRegs{0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
 		// mov r1, r0
 		{instr: MovRegT1{Rd: 1, Rm: 0, Rn: 0, Imm: 0, setflags: NEVER},
-			regs:     Registers{R: GeneralRegs{0xF00D, 0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}},
-			expected: Registers{R: GeneralRegs{0xF00D, 0xF00D, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
+			regs:     Registers{r: GeneralRegs{0xF00D, 0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}},
+			expected: Registers{r: GeneralRegs{0xF00D, 0xF00D, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
 		// mov pc, r12
 		{instr: MovRegT1{Rd: 15, Rm: 12, Rn: 0, Imm: 0, setflags: NEVER},
-			regs:     Registers{R: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFE, 13, 14, 0xDEAD}, Apsr: Apsr{C: true}},
-			expected: Registers{R: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFE, 13, 14, 0xCAFE}, Apsr: Apsr{C: true}}},
+			regs:     Registers{r: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFE}, pc: 0xDEAD, Apsr: Apsr{C: true}},
+			expected: Registers{r: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFE}, pc: 0xCAFE, Apsr: Apsr{C: true}}},
 		// mov pc, r12
 		{instr: MovRegT1{Rd: 15, Rm: 12, Rn: 0, Imm: 0, setflags: NEVER},
-			regs:     Registers{R: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFF, 13, 14, 0xDEAD}, Apsr: Apsr{C: true}},
-			expected: Registers{R: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFF, 13, 14, 0xCAFE}, Apsr: Apsr{C: true}}},
+			regs:     Registers{r: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFF}, pc: 0xDEAD, Apsr: Apsr{C: true}},
+			expected: Registers{r: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFF}, pc: 0xCAFE, Apsr: Apsr{C: true}}},
 	}
 
 	test_execute(t, cases)
