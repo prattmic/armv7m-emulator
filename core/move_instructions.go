@@ -45,3 +45,27 @@ func (instr MovRegT1) Execute(regs *Registers) {
 
 	MoveRegister(regs, instr.Rd, instr.Rm, instr.setflags, regs.Apsr.C)
 }
+
+/* MOV - Move (register)
+ * ARM ARM A7.7.76
+ * Encoding T2 */
+type MovRegT2 InstrFields
+
+func MovReg16T2(instr FetchedInstr) DecodedInstr {
+	raw_instr := instr.Uint32()
+
+	Rd := uint8(raw_instr & 0x7)
+	Rm := uint8((raw_instr >> 3) & 0x7)
+
+	return MovRegT2{Rd: Rd, Rm: Rm, Rn: 0, Imm: 0, setflags: ALWAYS}
+}
+
+func (instr MovRegT2) Execute(regs *Registers) {
+	if regs.InITBlock() {
+		// UNPREDICTABLE
+		// Raise exception (UsageFault?)
+		return
+	}
+
+	MoveRegister(regs, instr.Rd, instr.Rm, instr.setflags, regs.Apsr.C)
+}

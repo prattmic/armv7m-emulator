@@ -11,6 +11,11 @@ func LslImm16(instr FetchedInstr) DecodedInstr {
 	Rm := uint8((raw_instr >> 3) & 0x7)
 	Imm := (raw_instr >> 6) & 0x1f
 
+	if Imm == 0 {
+		/* Equivalent to MOV (reg) T2 encoding */
+		return MovReg16T2(instr)
+	}
+
 	return LslImm{Rd: Rd, Rm: Rm, Rn: 0, Imm: Imm, setflags: NOT_IT}
 }
 

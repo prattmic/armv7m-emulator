@@ -7,8 +7,10 @@ import (
 
 func TestIdentifyLslImm(t *testing.T) {
 	cases := []IdentifyCase{
-		{instr: FetchedInstr16(0x0000), instr_valid: true},  // lsl r0, r0, #0
+		{instr: FetchedInstr16(0x0040), instr_valid: true},  // lsl r0, r0, #1
 		{instr: FetchedInstr16(0x01e7), instr_valid: true},  // lsl r7, r4, #7
+		{instr: FetchedInstr16(0x0000), instr_valid: false}, // lsl r0, r0, #0 -> mov r0, r0
+		{instr: FetchedInstr16(0x0001), instr_valid: false}, // lsl r1, r0, #0 -> mov r1, r0
 		{instr: FetchedInstr16(0x4080), instr_valid: false}, // lsl r0, r0, r0
 		{instr: FetchedInstr16(0x40bf), instr_valid: false}, // lsl r7, r7, r7
 		{instr: FetchedInstr16(0x09e7), instr_valid: false}, // lsr r7, r4, #7
@@ -20,12 +22,12 @@ func TestIdentifyLslImm(t *testing.T) {
 
 func TestDecodeLslImm16(t *testing.T) {
 	cases := []DecodeCase{
-		// lsl r0, r0, #0
-		{instr: FetchedInstr16(0x0000), decoded: LslImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT}},
 		// lsl r0, r0, #1
 		{instr: FetchedInstr16(0x0040), decoded: LslImm{Rd: 0, Rm: 0, Rn: 0, Imm: 1, setflags: NOT_IT}},
 		// lsl r7, r4, #7
 		{instr: FetchedInstr16(0x01e7), decoded: LslImm{Rd: 7, Rm: 4, Rn: 0, Imm: 7, setflags: NOT_IT}},
+		// lsl r0, r0, #0 -> mov r0, r0
+		{instr: FetchedInstr16(0x0000), decoded: MovRegT2{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: ALWAYS}},
 	}
 
 	test_decode(t, cases, LslImm16)
@@ -33,10 +35,6 @@ func TestDecodeLslImm16(t *testing.T) {
 
 func TestExecuteLslImm(t *testing.T) {
 	cases := []ExecuteCase{
-		// lsl r0, r0, #0
-		{instr: LslImm{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT},
-			regs:     Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
-			expected: Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}},
 		// lsl r0, r0, #1
 		{instr: LslImm{Rd: 0, Rm: 0, Rn: 0, Imm: 1, setflags: NOT_IT},
 			regs:     Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},

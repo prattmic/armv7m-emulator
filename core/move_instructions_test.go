@@ -50,6 +50,8 @@ func TestIdentifyMovRegT1(t *testing.T) {
 		{instr: FetchedInstr16(0x46e7), instr_valid: true},  // mov pc, r12
 		{instr: FetchedInstr16(0x2000), instr_valid: false}, // mov r0, #0
 		{instr: FetchedInstr16(0x2745), instr_valid: false}, // mov r7, #0x45
+		{instr: FetchedInstr16(0x0000), instr_valid: false}, // mov r0, r0
+		{instr: FetchedInstr16(0x001f), instr_valid: false}, // mov r7, r3
 		{instr: FetchedInstr16(0x4080), instr_valid: false}, // lsl r0, r0, r0
 		{instr: FetchedInstr16(0xffff), instr_valid: false},
 	}
@@ -86,6 +88,45 @@ func TestExecuteMovRegT1(t *testing.T) {
 		{instr: MovRegT1{Rd: 15, Rm: 12, Rn: 0, Imm: 0, setflags: NEVER},
 			regs:     Registers{r: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFF}, pc: 0xDEAD, Apsr: Apsr{C: true}},
 			expected: Registers{r: GeneralRegs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0xCAFF}, pc: 0xCAFE, Apsr: Apsr{C: true}}},
+	}
+
+	test_execute(t, cases)
+}
+
+func TestIdentifyMovRegT2(t *testing.T) {
+	cases := []IdentifyCase{
+		{instr: FetchedInstr16(0x0000), instr_valid: true},  // mov r0, r0
+		{instr: FetchedInstr16(0x001f), instr_valid: true},  // mov r7, r3
+		{instr: FetchedInstr16(0x2000), instr_valid: false}, // mov r0, #0
+		{instr: FetchedInstr16(0x2745), instr_valid: false}, // mov r7, #0x45
+		{instr: FetchedInstr16(0x4080), instr_valid: false}, // lsl r0, r0, r0
+		{instr: FetchedInstr16(0xffff), instr_valid: false},
+	}
+
+	test_identify(t, cases, reflect.TypeOf(MovRegT2{}))
+}
+
+func TestDecodeMovReg16T2(t *testing.T) {
+	cases := []DecodeCase{
+		// mov r0, r0
+		{instr: FetchedInstr16(0x0000), decoded: MovRegT2{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: ALWAYS}},
+		// mov r7, r3
+		{instr: FetchedInstr16(0x001f), decoded: MovRegT2{Rd: 7, Rm: 3, Rn: 0, Imm: 0, setflags: ALWAYS}},
+	}
+
+	test_decode(t, cases, MovReg16T2)
+}
+
+func TestExecuteMovRegT2(t *testing.T) {
+	cases := []ExecuteCase{
+		// mov r0, r0
+		{instr: MovRegT2{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: ALWAYS},
+			regs:     Registers{r: GeneralRegs{0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}},
+			expected: Registers{r: GeneralRegs{0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: false}}},
+		// mov r1, r0
+		{instr: MovRegT2{Rd: 1, Rm: 0, Rn: 0, Imm: 0, setflags: ALWAYS},
+			regs:     Registers{r: GeneralRegs{0x8000F00D, 0xDEAD, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}},
+			expected: Registers{r: GeneralRegs{0x8000F00D, 0x8000F00D, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: false, N: true}}},
 	}
 
 	test_execute(t, cases)
