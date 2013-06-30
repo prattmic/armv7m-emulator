@@ -214,3 +214,51 @@ func TestExecuteLsrReg(t *testing.T) {
 
 	test_execute(t, cases)
 }
+
+func TestIdentifyAsrImm(t *testing.T) {
+	cases := []IdentifyCase{
+		{instr: FetchedInstr16(0x1000), instr_valid: true},  // asr r0, r0, #32 (imm of 0 becomes imm of 32)
+		{instr: FetchedInstr16(0x1001), instr_valid: true},  // asr r1, r0, #32
+		{instr: FetchedInstr16(0x111a), instr_valid: true},  // asr r2, r1, #2
+		{instr: FetchedInstr16(0x09e7), instr_valid: false}, // lsr r7, r4, #7
+		{instr: FetchedInstr16(0x40c0), instr_valid: false}, // lsr r0, r0, r0
+		{instr: FetchedInstr16(0x40d3), instr_valid: false}, // lsr r3, r3, r1
+		{instr: FetchedInstr16(0x01e7), instr_valid: false}, // lsl r7, r4, #7
+		{instr: FetchedInstr16(0x0000), instr_valid: false}, // lsl r0, r0, #0
+		{instr: FetchedInstr16(0xffff), instr_valid: false},
+	}
+
+	test_identify(t, cases, reflect.TypeOf(AsrImm{}))
+}
+
+func TestDecodeAsrImm16(t *testing.T) {
+	cases := []DecodeCase{
+		// asr r0, r0, #32
+		{instr: FetchedInstr16(0x1000), decoded: AsrImm{Rd: 0, Rm: 0, Rn: 0, Imm: 32, setflags: NOT_IT}},
+		// asr r1, r0, #32
+		{instr: FetchedInstr16(0x1001), decoded: AsrImm{Rd: 1, Rm: 0, Rn: 0, Imm: 32, setflags: NOT_IT}},
+		// asr r2, r3, #4
+		{instr: FetchedInstr16(0x111a), decoded: AsrImm{Rd: 2, Rm: 3, Rn: 0, Imm: 4, setflags: NOT_IT}},
+	}
+
+	test_decode(t, cases, AsrImm16)
+}
+
+func TestExecuteAsrImm(t *testing.T) {
+	cases := []ExecuteCase{
+		// asr r0, r0, #32
+		{instr: AsrImm{Rd: 0, Rm: 0, Rn: 0, Imm: 32, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{r: GeneralRegs{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{Z: true}}},
+		// asr r0, r0, #32
+		{instr: AsrImm{Rd: 0, Rm: 0, Rn: 0, Imm: 32, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{0x80000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{r: GeneralRegs{0xffffffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{N: true, C: true}}},
+		// asr r2, r1, #2
+		{instr: AsrImm{Rd: 2, Rm: 1, Rn: 0, Imm: 2, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{0, 0xffffffff - 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+			expected: Registers{r: GeneralRegs{0, 0xffffffff - 8, 0xffffffff - 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, Apsr: Apsr{N: true, C: true}}},
+	}
+
+	test_execute(t, cases)
+}

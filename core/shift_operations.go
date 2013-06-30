@@ -53,3 +53,20 @@ func LSR_C(value uint32, amount uint8) (uint32, bool) {
 
 	return result, carry_out
 }
+
+/* Perform ASR instruction, updating condition codes */
+func ASR(regs *Registers, value uint32, shift_n uint8, setflags SetFlags) uint32 {
+	return ShiftOp(regs, value, shift_n, setflags, ASR_C)
+}
+
+/* Right shift value by a positive amount, copying the leftmost bit */
+func ASR_C(value uint32, amount uint8) (uint32, bool) {
+	/* The last bit to be carried out determines the carry */
+	carry_out := (value & (1 << (amount - 1))) != 0
+
+	extended := int32(value)
+
+	result := extended >> amount
+
+	return uint32(result), carry_out
+}
