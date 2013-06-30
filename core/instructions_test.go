@@ -39,17 +39,23 @@ func test_decode(t *testing.T, cases []DecodeCase, decode DecodeFunc) {
 	for _, test := range cases {
 		actual := decode(test.instr)
 		if actual != test.decoded {
-			t.Errorf("instr: %v, expected %#v, got %#v", test.instr, test.decoded, actual)
+			t.Errorf("instr: %#v", test.instr)
+			t.Errorf("decoded: %#v", actual)
+			t.Errorf("expected: %#v", test.decoded)
 		}
 	}
 }
 
 func test_execute(t *testing.T, cases []ExecuteCase) {
 	for _, test := range cases {
+		original := test.regs
 		test.instr.Execute(&test.regs)
 
 		if test.regs != test.expected {
-			t.Errorf("instr: %#v, expected %#v, got %#v", test.instr, test.expected, test.regs)
+			t.Errorf("instr: %#v", test.instr)
+			t.Errorf("Before:\n%s", original.Pretty())
+			t.Errorf("After:\n%s", test.regs.Pretty())
+			t.Errorf("Expected:\n%s", test.expected.Pretty())
 		}
 	}
 }
@@ -57,7 +63,9 @@ func test_execute(t *testing.T, cases []ExecuteCase) {
 func verify_identify(t *testing.T, test IdentifyCase, instr_type reflect.Type, identified DecodedInstr, err error) {
 	if err != nil {
 		if test.instr_valid {
-			t.Errorf("instr: %v, err: %v", test.instr, err)
+			t.Errorf("instr: %#v", test.instr)
+			t.Errorf("err: %v", err)
+			return
 		} else {
 			/* An error is OK, because this wasn't considered a valid instruction */
 			return
@@ -68,10 +76,14 @@ func verify_identify(t *testing.T, test IdentifyCase, instr_type reflect.Type, i
 	types_match := instr_type == identified_type
 
 	if test.instr_valid && !types_match {
-		t.Errorf("instr: %v, decoded type: %T, expected type: %v", test.instr, identified, instr_type)
+		t.Errorf("instr: %#v", test.instr)
+		t.Errorf("decoded type: %T", identified)
+		t.Errorf("expected type: %v", instr_type)
 	}
 
 	if !test.instr_valid && types_match {
-		t.Errorf("instr: %v, decoded type: %T, expected not type: %v", test.instr, identified, instr_type)
+		t.Errorf("instr: %#v", test.instr)
+		t.Errorf("decoded type: %T", identified)
+		t.Errorf("expected NOT type: %v", instr_type)
 	}
 }
