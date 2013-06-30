@@ -14,6 +14,14 @@ const (
 	NOT_IT // Only set condition codes if not in IT block
 )
 
+func (setflags SetFlags) String() string {
+	if setflags == ALWAYS || setflags == NOT_IT {
+		return "s"
+	}
+
+	return ""
+}
+
 type InstrFields struct {
 	setflags SetFlags
 	Imm      uint32
