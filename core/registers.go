@@ -57,6 +57,20 @@ func (regs Registers) LastInITBlock() bool {
 	return (regs.Epsr.IT & 0xf) == 0x8
 }
 
+func (regs *Registers) BranchTo(addr uint32) {
+	regs.R[PC] = addr
+}
+
+func (regs *Registers) BranchWritePC(addr uint32) {
+	addr &^= 0x1 // Clear the thumb bit
+
+	regs.BranchTo(addr)
+}
+
+func (regs *Registers) ALUWritePC(addr uint32) {
+	regs.BranchWritePC(addr)
+}
+
 func (regs Registers) Print() {
 	for i := 0; i < 16; i++ {
 		if i != 0 {
