@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 /* LSL - Logical Shift Left (immediate)
  * ARM ARM A7.7.67 */
 type LslImm InstrFields
@@ -27,6 +29,10 @@ func (instr LslImm) Execute(regs *Registers) {
 	regs.SetR(instr.Rd, result)
 }
 
+func (instr LslImm) String() string {
+	return fmt.Sprintf("lsl%s %s, %s, #%#x", instr.setflags, instr.Rd, instr.Rm, instr.Imm)
+}
+
 /* LSL - Logical Shift Left (register)
  * ARM ARM A7.7.68 */
 type LslReg InstrFields
@@ -46,6 +52,10 @@ func (instr LslReg) Execute(regs *Registers) {
 
 	result := LSL(regs, value, shift_n, instr.setflags)
 	regs.SetR(instr.Rd, result)
+}
+
+func (instr LslReg) String() string {
+	return fmt.Sprintf("lsl%s %s, %s", instr.setflags, instr.Rd, instr.Rm)
 }
 
 /* LSR - Logical Shift Right (immediate)
@@ -70,6 +80,10 @@ func (instr LsrImm) Execute(regs *Registers) {
 	regs.SetR(instr.Rd, result)
 }
 
+func (instr LsrImm) String() string {
+	return fmt.Sprintf("lsr%s %s, %s, #%#x", instr.setflags, instr.Rd, instr.Rm, instr.Imm)
+}
+
 /* LSR - Logical Shift Right (register)
  * ARM ARM A7.7.70 */
 type LsrReg InstrFields
@@ -89,4 +103,8 @@ func (instr LsrReg) Execute(regs *Registers) {
 
 	result := LSR(regs, value, shift_n, instr.setflags)
 	regs.SetR(instr.Rd, result)
+}
+
+func (instr LsrReg) String() string {
+	return fmt.Sprintf("lsr%s %s, %s", instr.setflags, instr.Rd, instr.Rm)
 }

@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 /* MOV - Move (immediate)
  * ARM ARM A7.7.75 */
 type MovImm InstrFields
@@ -17,6 +19,10 @@ func (instr MovImm) Execute(regs *Registers) {
 	value := instr.Imm
 
 	MoveValue(regs, instr.Rd, value, instr.setflags, regs.Apsr.C)
+}
+
+func (instr MovImm) String() string {
+	return fmt.Sprintf("mov%s %s, #%#x", instr.setflags, instr.Rd, instr.Imm)
 }
 
 /* MOV - Move (register)
@@ -46,6 +52,10 @@ func (instr MovRegT1) Execute(regs *Registers) {
 	MoveRegister(regs, instr.Rd, instr.Rm, instr.setflags, regs.Apsr.C)
 }
 
+func (instr MovRegT1) String() string {
+	return fmt.Sprintf("mov %s, %s", instr.Rd, instr.Rm)
+}
+
 /* MOV - Move (register)
  * ARM ARM A7.7.76
  * Encoding T2 */
@@ -68,4 +78,8 @@ func (instr MovRegT2) Execute(regs *Registers) {
 	}
 
 	MoveRegister(regs, instr.Rd, instr.Rm, instr.setflags, regs.Apsr.C)
+}
+
+func (instr MovRegT2) String() string {
+	return fmt.Sprintf("movs %s, %s", instr.Rd, instr.Rm)
 }

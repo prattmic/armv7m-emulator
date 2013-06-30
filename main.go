@@ -74,7 +74,7 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("\t%#v\n", instr)
+		fmt.Printf("\t%s\t%#v\n", instr, instr)
 
 		if *execute {
 			instr.Execute(regs)
