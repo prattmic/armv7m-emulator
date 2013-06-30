@@ -30,7 +30,7 @@ func (instr LslImm) Execute(regs *Registers) {
 }
 
 func (instr LslImm) String() string {
-	return fmt.Sprintf("lsl%s %s, %s, #%#x", instr.setflags, instr.Rd, instr.Rm, instr.Imm)
+	return fmt.Sprintf("lsl%s %s, %s, #%d", instr.setflags, instr.Rd, instr.Rm, instr.Imm)
 }
 
 /* LSL - Logical Shift Left (register)
@@ -81,7 +81,7 @@ func (instr LsrImm) Execute(regs *Registers) {
 }
 
 func (instr LsrImm) String() string {
-	return fmt.Sprintf("lsr%s %s, %s, #%#x", instr.setflags, instr.Rd, instr.Rm, instr.Imm)
+	return fmt.Sprintf("lsr%s %s, %s, #%d", instr.setflags, instr.Rd, instr.Rm, instr.Imm)
 }
 
 /* LSR - Logical Shift Right (register)
