@@ -1,6 +1,23 @@
 package core
 
+/* Generic shifting function
+ *
+ * @param value uint32		Value to shift
+ * @param amount uint8		Amount to shift by
+ *
+ * @return result uint32	Result of shift
+ * @return carry bool		Carry out of shift
+ */
 type ShiftFunc func(uint32, uint8) (uint32, bool)
+
+type Shift struct {
+	function ShiftFunc
+	amount   uint8
+}
+
+func (shift Shift) Evaluate(input uint32) (uint32, bool) {
+	return shift.function(input, shift.amount)
+}
 
 /* Perform shift operation, updating condition codes */
 func ShiftOp(regs *Registers, value uint32, shift_n uint8, setflags SetFlags, do_shift ShiftFunc) uint32 {

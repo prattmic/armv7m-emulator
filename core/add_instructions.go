@@ -18,7 +18,7 @@ func AddReg16T1(instr FetchedInstr) DecodedInstr {
 }
 
 func (instr AddRegT1) Execute(regs *Registers) {
-	AddRegister(regs, InstrFields(instr), LSL_C, 0)
+	AddRegister(regs, InstrFields(instr), Shift{function: LSL_C, amount: 0})
 }
 
 func (instr AddRegT1) String() string {

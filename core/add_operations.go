@@ -25,8 +25,8 @@ func AddWithCarry(x uint32, y uint32, carry_in uint8) (uint32, uint8, uint8) {
 }
 
 /* Perform addition instruction, with shift, updating condition codes */
-func AddRegister(regs *Registers, instr InstrFields, shift_func ShiftFunc, shift_amount uint8) {
-	shifted, _ := shift_func(regs.R(instr.Rm), shift_amount)
+func AddRegister(regs *Registers, instr InstrFields, shift Shift) {
+	shifted, _ := shift.Evaluate(regs.R(instr.Rm))
 	result, carry, overflow := AddWithCarry(regs.R(instr.Rn), shifted, 0)
 
 	if instr.Rd == PC {
