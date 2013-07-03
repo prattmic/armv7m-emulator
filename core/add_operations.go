@@ -33,7 +33,7 @@ func AddRegister(regs *Registers, instr InstrFields, shift_func ShiftFunc, shift
 		regs.ALUWritePC(result)
 	} else {
 		regs.SetR(instr.Rd, result)
-		if instr.setflags == ALWAYS || (instr.setflags == NOT_IT && !regs.InITBlock()) {
+		if instr.setflags.ShouldSetFlags(*regs) {
 			regs.Apsr.N = (result & 0x80000000) != 0
 			regs.Apsr.Z = (result) == 0
 			regs.Apsr.C = utobool(carry)

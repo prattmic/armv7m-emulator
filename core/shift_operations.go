@@ -13,7 +13,7 @@ func ShiftOp(regs *Registers, value uint32, shift_n uint8, setflags SetFlags, do
 		result, carry_out = do_shift(value, shift_n)
 	}
 
-	if setflags == ALWAYS || (setflags == NOT_IT && !regs.InITBlock()) {
+	if setflags.ShouldSetFlags(*regs) {
 		regs.Apsr.N = (result & 0x80000000) != 0
 		regs.Apsr.Z = (result) == 0
 		regs.Apsr.C = carry_out

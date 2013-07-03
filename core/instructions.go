@@ -22,6 +22,13 @@ func (setflags SetFlags) String() string {
 	return ""
 }
 
+func (setflags SetFlags) ShouldSetFlags(regs Registers) bool {
+	if setflags == ALWAYS || (setflags == NOT_IT && !regs.InITBlock()) {
+		return true
+	}
+	return false
+}
+
 type InstrFields struct {
 	setflags SetFlags
 	Imm      uint32

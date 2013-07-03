@@ -4,7 +4,7 @@ package core
 func MoveValue(regs *Registers, dest RegIndex, value uint32, setflags SetFlags, carry bool) {
 	regs.SetR(dest, value)
 
-	if setflags == ALWAYS || (setflags == NOT_IT && !regs.InITBlock()) {
+	if setflags.ShouldSetFlags(*regs) {
 		regs.Apsr.N = (value & 0x80000000) != 0
 		regs.Apsr.Z = value == 0
 		regs.Apsr.C = carry
