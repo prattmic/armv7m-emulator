@@ -48,3 +48,28 @@ func (instr AddRegSPT1) Execute(regs *Registers) {
 func (instr AddRegSPT1) String() string {
 	return fmt.Sprintf("add %s, sp, %s", instr.Rd, instr.Rd)
 }
+
+/* ADD (SP plus register)
+ * ARM ARM A7.7.6
+ * Encoding T2 */
+type AddRegSPT2 InstrFields
+
+func AddRegSP16T2(instr FetchedInstr) DecodedInstr {
+	raw_instr := instr.Uint32()
+
+	Rm := RegIndex((raw_instr >> 3) & 0xf)
+
+	if Rm == SP {
+		return AddRegSP16T1(instr)
+	}
+
+	return AddRegSPT2{Rd: SP, Rm: Rm, Rn: SP, Imm: 0, setflags: NEVER}
+}
+
+func (instr AddRegSPT2) Execute(regs *Registers) {
+	AddRegister(regs, InstrFields(instr), Shift{function: LSL_C, amount: 0})
+}
+
+func (instr AddRegSPT2) String() string {
+	return fmt.Sprintf("add sp, %s", instr.Rm)
+}

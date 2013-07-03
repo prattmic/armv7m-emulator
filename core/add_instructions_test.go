@@ -111,6 +111,61 @@ func TestExecuteAddRegSPT1(t *testing.T) {
 		{instr: AddRegSPT1{Rd: PC, Rm: PC, Rn: SP, Imm: 0, setflags: NEVER},
 			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 0x80000000, sp: SPRegs{4, 0}, Control: Control{Spsel: MSP}},
 			expected: Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 0x80000004, sp: SPRegs{4, 0}, Control: Control{Spsel: MSP}}},
+		// add sp, sp, sp
+		{instr: AddRegSPT1{Rd: SP, Rm: SP, Rn: SP, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, sp: SPRegs{4, 0}, Control: Control{Spsel: MSP}},
+			expected: Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, sp: SPRegs{8, 0}, Control: Control{Spsel: MSP}}},
+	}
+
+	test_execute(t, cases)
+}
+
+func TestIdentifyAddRegSPT2(t *testing.T) {
+	cases := []IdentifyCase{
+		{instr: FetchedInstr16(0x4485), instr_valid: true},  // add sp, r0
+		{instr: FetchedInstr16(0x44fd), instr_valid: true},  // add sp, pc
+		{instr: FetchedInstr16(0x44ed), instr_valid: false}, // add sp, sp -> add sp, sp, sp
+		{instr: FetchedInstr16(0x4468), instr_valid: false}, // add r0, sp, r0
+		{instr: FetchedInstr16(0x446f), instr_valid: false}, // add r7, sp, r7
+		{instr: FetchedInstr16(0x44ef), instr_valid: false}, // add pc, sp, pc
+		{instr: FetchedInstr16(0x1800), instr_valid: false}, // adds r0, r0, r0
+		{instr: FetchedInstr16(0x19ff), instr_valid: false}, // adds r7, r7, r7
+		{instr: FetchedInstr16(0x18d1), instr_valid: false}, // adds r1, r2, r3
+		{instr: FetchedInstr16(0x0000), instr_valid: false}, // mov r0, r0
+		{instr: FetchedInstr16(0x001f), instr_valid: false}, // mov r7, r3
+		{instr: FetchedInstr16(0xffff), instr_valid: false},
+	}
+
+	test_identify(t, cases, reflect.TypeOf(AddRegSPT2{}))
+}
+
+func TestDecodeAddRegSP16T2(t *testing.T) {
+	cases := []DecodeCase{
+		// add sp, r0
+		{instr: FetchedInstr16(0x4485), decoded: AddRegSPT2{Rd: SP, Rm: 0, Rn: SP, Imm: 0, setflags: NEVER}},
+		// add sp, pc
+		{instr: FetchedInstr16(0x44fd), decoded: AddRegSPT2{Rd: SP, Rm: PC, Rn: SP, Imm: 0, setflags: NEVER}},
+		// add sp, sp -> add sp, sp, sp
+		{instr: FetchedInstr16(0x44ed), decoded: AddRegSPT1{Rd: SP, Rm: SP, Rn: SP, Imm: 0, setflags: NEVER}},
+	}
+
+	test_decode(t, cases, AddRegSP16T2)
+}
+
+func TestExecuteAddRegSPT2(t *testing.T) {
+	cases := []ExecuteCase{
+		// add sp, r0
+		{instr: AddRegSPT2{Rd: SP, Rm: 0, Rn: SP, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, sp: SPRegs{0, 0}, Control: Control{Spsel: MSP}},
+			expected: Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, sp: SPRegs{1, 0}, Control: Control{Spsel: MSP}}},
+		// add sp, r0
+		{instr: AddRegSPT2{Rd: SP, Rm: 0, Rn: SP, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, sp: SPRegs{0, 1}, Control: Control{Spsel: PSP}},
+			expected: Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, sp: SPRegs{0, 2}, Control: Control{Spsel: PSP}}},
+		// add sp, pc
+		{instr: AddRegSPT2{Rd: SP, Rm: PC, Rn: SP, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 0x80000000, sp: SPRegs{4, 0}, Control: Control{Spsel: MSP}},
+			expected: Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 0x80000000, sp: SPRegs{0x80000004, 0}, Control: Control{Spsel: MSP}}},
 	}
 
 	test_execute(t, cases)
