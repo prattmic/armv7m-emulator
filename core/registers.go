@@ -170,16 +170,16 @@ func (regs Registers) Pretty() string {
 	fmt.Fprintf(&b, "MSP = %#x\tPSP = %#x\n", regs.Msp(), regs.Psp())
 
 	fmt.Fprintf(&b, "BASEPRI = %d\tPRIMASK = %d\tFAULTMASK = %d\n", regs.Basepri,
-		booltoi(regs.Primask), booltoi(regs.Faultmask))
+		booltou(regs.Primask), booltou(regs.Faultmask))
 
-	fmt.Fprintf(&b, "CONTROL: nPRIV = %d SPSEL = %d FPCA = %d\n", booltoi(regs.Control.Npriv),
-		uint8(regs.Control.Spsel), booltoi(regs.Control.Fpca))
+	fmt.Fprintf(&b, "CONTROL: nPRIV = %d SPSEL = %d FPCA = %d\n", booltou(regs.Control.Npriv),
+		uint8(regs.Control.Spsel), booltou(regs.Control.Fpca))
 
 	fmt.Fprintf(&b, "APSR: N = %d Z = %d C = %d V = %d Q = %d GE = %d\n",
-		booltoi(regs.Apsr.N), booltoi(regs.Apsr.Z), booltoi(regs.Apsr.C),
-		booltoi(regs.Apsr.V), booltoi(regs.Apsr.Q), regs.Apsr.GE)
+		booltou(regs.Apsr.N), booltou(regs.Apsr.Z), booltou(regs.Apsr.C),
+		booltou(regs.Apsr.V), booltou(regs.Apsr.Q), regs.Apsr.GE)
 
-	fmt.Fprintf(&b, "EPSR: T = %d ICI = %#x IT = %#x\n", booltoi(regs.Epsr.T),
+	fmt.Fprintf(&b, "EPSR: T = %d ICI = %#x IT = %#x\n", booltou(regs.Epsr.T),
 		regs.Epsr.ICI, regs.Epsr.IT)
 
 	fmt.Fprintf(&b, "IPSR: EXCPNUM = %d\n", regs.Ipsr.ExcpNum)
@@ -189,14 +189,6 @@ func (regs Registers) Pretty() string {
 
 func (regs Registers) Print() {
 	fmt.Print(regs.Pretty())
-}
-
-func booltoi(b bool) int {
-	if b {
-		return 1
-	} else {
-		return 0
-	}
 }
 
 func (i RegIndex) String() string {
