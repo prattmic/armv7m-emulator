@@ -25,6 +25,48 @@ func (instr AddRegT1) String() string {
 	return fmt.Sprintf("adds %s, %s, %s", instr.Rd, instr.Rn, instr.Rm)
 }
 
+/* ADD (register)
+ * ARM ARM A7.7.4
+ * Encoding T2 */
+type AddRegT2 InstrFields
+
+func AddReg16T2(instr FetchedInstr) DecodedInstr {
+	raw_instr := instr.Uint32()
+
+	rdn := uint8(raw_instr & 0x7)
+	DN := uint8((raw_instr >> 7) & 0x1)
+	Rdn := RegIndex((DN << 3) | rdn)
+	Rm := RegIndex((raw_instr >> 3) & 0xf)
+
+	if Rm == SP {
+		return AddRegSP16T1(instr)
+	}
+
+	if Rdn == SP {
+		return AddRegSP16T2(instr)
+	}
+
+	return AddRegT2{Rd: Rdn, Rm: Rm, Rn: Rdn, Imm: 0, setflags: NEVER}
+}
+
+func (instr AddRegT2) Execute(regs *Registers) {
+	if instr.Rd == PC && regs.InITBlock() && !regs.LastInITBlock() {
+		// UNPREDICTABLE
+		// Raise exception (UsageFault?)
+		return
+	} else if instr.Rd == PC && instr.Rm == PC {
+		// UNPREDICTABLE
+		// Raise exception (UsageFault?)
+		return
+	}
+
+	AddRegister(regs, InstrFields(instr), Shift{function: LSL_C, amount: 0})
+}
+
+func (instr AddRegT2) String() string {
+	return fmt.Sprintf("add %s, %s", instr.Rd, instr.Rm)
+}
+
 /* ADD (SP plus register)
  * ARM ARM A7.7.6
  * Encoding T1 */

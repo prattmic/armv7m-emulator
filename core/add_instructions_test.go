@@ -61,6 +61,64 @@ func TestExecuteAddRegT1(t *testing.T) {
 	test_execute(t, cases)
 }
 
+func TestIdentifyAddRegT2(t *testing.T) {
+	cases := []IdentifyCase{
+		{instr: FetchedInstr16(0x4400), instr_valid: true},  // add r0, r0
+		{instr: FetchedInstr16(0x4487), instr_valid: true},  // add pc, r0
+		{instr: FetchedInstr16(0x44f7), instr_valid: true},  // add pc, lr
+		{instr: FetchedInstr16(0x4468), instr_valid: false}, // add r0, sp -> add r0, sp, r0 (sp encoding)
+		{instr: FetchedInstr16(0x4485), instr_valid: false}, // add sp, r0 -> add sp, r0 (sp encoding)
+		{instr: FetchedInstr16(0x1800), instr_valid: false}, // adds r0, r0, r0
+		{instr: FetchedInstr16(0x19ff), instr_valid: false}, // adds r7, r7, r7
+		{instr: FetchedInstr16(0x18d1), instr_valid: false}, // adds r1, r2, r3
+		{instr: FetchedInstr16(0x2745), instr_valid: false}, // mov r7, #0x45
+		{instr: FetchedInstr16(0x4080), instr_valid: false}, // lsl r0, r0, r0
+		{instr: FetchedInstr16(0xffff), instr_valid: false},
+	}
+
+	test_identify(t, cases, reflect.TypeOf(AddRegT2{}))
+}
+
+func TestDecodeAddReg16T2(t *testing.T) {
+	cases := []DecodeCase{
+		// add r0, r0
+		{instr: FetchedInstr16(0x4400), decoded: AddRegT2{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NEVER}},
+		// add pc, r0
+		{instr: FetchedInstr16(0x4487), decoded: AddRegT2{Rd: PC, Rm: 0, Rn: PC, Imm: 0, setflags: NEVER}},
+		// add pc, lr
+		{instr: FetchedInstr16(0x44f7), decoded: AddRegT2{Rd: PC, Rm: LR, Rn: PC, Imm: 0, setflags: NEVER}},
+		// add r0, sp -> add r0, sp, r0 (sp encoding)
+		{instr: FetchedInstr16(0x4468), decoded: AddRegSPT1{Rd: 0, Rm: 0, Rn: SP, Imm: 0, setflags: NEVER}},
+		// add sp, r0 -> add sp, r0 (sp encoding)
+		{instr: FetchedInstr16(0x4485), decoded: AddRegSPT2{Rd: SP, Rm: 0, Rn: SP, Imm: 0, setflags: NEVER}},
+	}
+
+	test_decode(t, cases, AddReg16T2)
+}
+
+var share_t *testing.T
+
+func TestExecuteAddRegT2(t *testing.T) {
+	cases := []ExecuteCase{
+		// add r0, r0
+		{instr: AddRegT2{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
+			expected: Registers{r: GeneralRegs{2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}}},
+		// add pc, r0
+		{instr: AddRegT2{Rd: PC, Rm: 0, Rn: PC, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{4, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 1000},
+			expected: Registers{r: GeneralRegs{4, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 1004}},
+		// add pc, lr
+		{instr: AddRegT2{Rd: PC, Rm: LR, Rn: PC, Imm: 0, setflags: NEVER},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 1000, lr: 2000},
+			expected: Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, pc: 3000, lr: 2000}},
+	}
+
+	share_t = t
+
+	test_execute(t, cases)
+}
+
 func TestIdentifyAddRegSPT1(t *testing.T) {
 	cases := []IdentifyCase{
 		{instr: FetchedInstr16(0x4468), instr_valid: true},  // add r0, sp, r0
