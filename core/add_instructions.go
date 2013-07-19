@@ -115,3 +115,26 @@ func (instr AddRegSPT2) Execute(regs *Registers) {
 func (instr AddRegSPT2) String() string {
 	return fmt.Sprintf("add sp, %s", instr.Rm)
 }
+
+/* SUB (register)
+ * ARM ARM A7.7.172
+ * Encoding T1 */
+type SubRegT1 InstrFields
+
+func SubReg16T1(instr FetchedInstr) DecodedInstr {
+	raw_instr := instr.Uint32()
+
+	Rd := RegIndex(raw_instr & 0x7)
+	Rn := RegIndex((raw_instr >> 3) & 0x7)
+	Rm := RegIndex((raw_instr >> 6) & 0x7)
+
+	return SubRegT1{Rd: Rd, Rm: Rm, Rn: Rn, Imm: 0, setflags: NOT_IT}
+}
+
+func (instr SubRegT1) Execute(regs *Registers) {
+	SubRegister(regs, InstrFields(instr), Shift{function: LSL_C, amount: 0})
+}
+
+func (instr SubRegT1) String() string {
+	return fmt.Sprintf("subs %s, %s, %s", instr.Rd, instr.Rm, instr.Rn)
+}

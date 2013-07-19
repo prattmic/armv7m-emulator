@@ -24,6 +24,7 @@ var InstrOpcodes16 = map[Opcode]DecodeFunc{
 	Opcode{mask: 0xff00, value: 0x4400}: AddReg16T2,
 	Opcode{mask: 0xff78, value: 0x4468}: AddRegSP16T1,
 	Opcode{mask: 0xff87, value: 0x4485}: AddRegSP16T2,
+	Opcode{mask: 0xfe00, value: 0x1a00}: SubReg16T1,
 }
 
 var InstrOpcodes32 = map[Opcode]DecodeFunc{}

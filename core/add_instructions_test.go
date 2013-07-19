@@ -228,3 +228,60 @@ func TestExecuteAddRegSPT2(t *testing.T) {
 
 	test_execute(t, cases)
 }
+
+func TestIdentifySubRegT1(t *testing.T) {
+	cases := []IdentifyCase{
+		{instr: FetchedInstr16(0x1a00), instr_valid: true},  // subs r0, r0, r0
+		{instr: FetchedInstr16(0x1bff), instr_valid: true},  // subs r7, r7, r7
+		{instr: FetchedInstr16(0x1ad1), instr_valid: true},  // subs r1, r2, r3
+		{instr: FetchedInstr16(0x19ff), instr_valid: false}, // adds r7, r7, r7
+		{instr: FetchedInstr16(0x18d1), instr_valid: false}, // adds r1, r2, r3
+		{instr: FetchedInstr16(0x0000), instr_valid: false}, // mov r0, r0
+		{instr: FetchedInstr16(0x2000), instr_valid: false}, // mov r0, #0
+		{instr: FetchedInstr16(0x2745), instr_valid: false}, // mov r7, #0x45
+		{instr: FetchedInstr16(0x4080), instr_valid: false}, // lsl r0, r0, r0
+		{instr: FetchedInstr16(0xffff), instr_valid: false},
+	}
+
+	test_identify(t, cases, reflect.TypeOf(SubRegT1{}))
+}
+
+func TestDecodeSubReg16T1(t *testing.T) {
+	cases := []DecodeCase{
+		// subs r0, r0, r0
+		{instr: FetchedInstr16(0x1a00), decoded: SubRegT1{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT}},
+		// subs r7, r7, r7
+		{instr: FetchedInstr16(0x1bff), decoded: SubRegT1{Rd: 7, Rm: 7, Rn: 7, Imm: 0, setflags: NOT_IT}},
+		// subs r1, r2, r3
+		{instr: FetchedInstr16(0x1ad1), decoded: SubRegT1{Rd: 1, Rm: 3, Rn: 2, Imm: 0, setflags: NOT_IT}},
+	}
+
+	test_decode(t, cases, SubReg16T1)
+}
+
+func TestExecuteSubRegT1(t *testing.T) {
+	cases := []ExecuteCase{
+		// subs r0, r0, r0
+		{instr: SubRegT1{Rd: 0, Rm: 0, Rn: 0, Imm: 0, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
+			expected: Registers{r: GeneralRegs{0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, Apsr: Apsr{Z: true, C: true}}},
+		// subs r0, r0, r1
+		{instr: SubRegT1{Rd: 0, Rm: 1, Rn: 0, Imm: 0, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, Apsr: Apsr{Z: true}},
+			expected: Registers{r: GeneralRegs{0xfffffffe, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, Apsr: Apsr{N: true}}},
+		// subs r1, r2, r3
+		{instr: SubRegT1{Rd: 1, Rm: 3, Rn: 2, Imm: 0, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
+			expected: Registers{r: GeneralRegs{1, 0xffffffff, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, Apsr: Apsr{N: true}}},
+		// subs r0, r1, r2
+		{instr: SubRegT1{Rd: 0, Rm: 2, Rn: 1, Imm: 0, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{0, 0x7fffffff, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}},
+			expected: Registers{r: GeneralRegs{0x7ffffffe, 0x7fffffff, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, Apsr: Apsr{C: true}}},
+		// subs r0, r1, r1
+		{instr: SubRegT1{Rd: 0, Rm: 1, Rn: 1, Imm: 0, setflags: NOT_IT},
+			regs:     Registers{r: GeneralRegs{0, 0x80000000, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}},
+			expected: Registers{r: GeneralRegs{0, 0x80000000, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, Apsr: Apsr{Z: true, C: true}}},
+	}
+
+	test_execute(t, cases)
+}

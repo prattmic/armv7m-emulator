@@ -41,3 +41,21 @@ func AddRegister(regs *Registers, instr InstrFields, shift Shift) {
 		}
 	}
 }
+
+/* Perform subtraction instruction, with shift, updating condition codes */
+func SubRegister(regs *Registers, instr InstrFields, shift Shift) {
+	shifted, _ := shift.Evaluate(regs.R(instr.Rm))
+	result, carry, overflow := AddWithCarry(regs.R(instr.Rn), ^shifted, 1)
+
+	if instr.Rd == PC {
+		regs.ALUWritePC(result)
+	} else {
+		regs.SetR(instr.Rd, result)
+		if instr.setflags.ShouldSetFlags(*regs) {
+			regs.Apsr.N = (result & 0x80000000) != 0
+			regs.Apsr.Z = (result) == 0
+			regs.Apsr.C = utobool(carry)
+			regs.Apsr.V = utobool(overflow)
+		}
+	}
+}
