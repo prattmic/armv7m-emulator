@@ -139,6 +139,28 @@ func (instr AddImmT1) String() string {
 	return fmt.Sprintf("adds %s, %s, #%d", instr.Rd, instr.Rn, instr.Imm)
 }
 
+/* ADD (immediate)
+ * ARM ARM A7.7.3
+ * Encoding T2 */
+type AddImmT2 InstrFields
+
+func AddImm16T2(instr FetchedInstr) DecodedInstr {
+	raw_instr := instr.Uint32()
+
+	Imm := uint32(raw_instr & 0xff)
+	Rdn := RegIndex((raw_instr >> 8) & 0x7)
+
+	return AddImmT2{Rd: Rdn, Rm: 0, Rn: Rdn, Imm: Imm, setflags: NOT_IT}
+}
+
+func (instr AddImmT2) Execute(regs *Registers) {
+	AddImmediate(regs, InstrFields(instr))
+}
+
+func (instr AddImmT2) String() string {
+	return fmt.Sprintf("adds %s, #%d", instr.Rd, instr.Imm)
+}
+
 /* SUB (register)
  * ARM ARM A7.7.172
  * Encoding T1 */
