@@ -24,29 +24,31 @@ func AddWithCarry(x uint32, y uint32, carry_in uint8) (uint32, uint8, uint8) {
 	return uint32(result), carry_out, overflow
 }
 
-/* Perform addition instruction, with shift, updating condition codes */
+/* Perform addition instruction (reg), with shift, updating condition codes */
 func AddRegister(regs *Registers, instr InstrFields, shift Shift) {
 	shifted, _ := shift.Evaluate(regs.R(instr.Rm))
 	result, carry, overflow := AddWithCarry(regs.R(instr.Rn), shifted, 0)
 
-	if instr.Rd == PC {
-		regs.ALUWritePC(result)
-	} else {
-		regs.SetR(instr.Rd, result)
-		if instr.setflags.ShouldSetFlags(*regs) {
-			regs.Apsr.N = (result & 0x80000000) != 0
-			regs.Apsr.Z = (result) == 0
-			regs.Apsr.C = utobool(carry)
-			regs.Apsr.V = utobool(overflow)
-		}
-	}
+	add_update_condition_codes(regs, instr, result, carry, overflow)
 }
 
-/* Perform subtraction instruction, with shift, updating condition codes */
+/* Perform addition instruction (imm), updating condition codes */
+func AddImmediate(regs *Registers, instr InstrFields) {
+	result, carry, overflow := AddWithCarry(regs.R(instr.Rn), instr.Imm, 0)
+
+	add_update_condition_codes(regs, instr, result, carry, overflow)
+}
+
+/* Perform subtraction instruction (reg), with shift, updating condition codes */
 func SubRegister(regs *Registers, instr InstrFields, shift Shift) {
 	shifted, _ := shift.Evaluate(regs.R(instr.Rm))
 	result, carry, overflow := AddWithCarry(regs.R(instr.Rn), ^shifted, 1)
 
+	add_update_condition_codes(regs, instr, result, carry, overflow)
+}
+
+/* Update condition codes for ADD/SUB instruction */
+func add_update_condition_codes(regs *Registers, instr InstrFields, result uint32, carry uint8, overflow uint8) {
 	if instr.Rd == PC {
 		regs.ALUWritePC(result)
 	} else {
