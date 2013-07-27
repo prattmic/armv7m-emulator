@@ -17,12 +17,12 @@ const (
 )
 
 type Apsr struct {
-	N  bool
-	Z  bool
-	C  bool
-	V  bool
-	Q  bool
-	GE uint8
+	N  bool  // Negative
+	Z  bool  // Zero
+	C  bool  // Carry
+	V  bool  // Overflow
+	Q  bool  // Saturation
+	GE uint8 // Greater than or equal flags
 }
 
 type Ipsr struct {
@@ -30,9 +30,9 @@ type Ipsr struct {
 }
 
 type Epsr struct {
-	T   bool
-	ICI uint16
-	IT  uint16
+	T   bool   // Thumb bit
+	ICI uint16 // Interrupt-continue
+	IT  uint16 // IT block flags
 }
 
 type Mode uint8
@@ -43,9 +43,9 @@ const (
 )
 
 type Control struct {
-	Npriv bool
-	Spsel SPType
-	Fpca  bool
+	Npriv bool   // NOT privilege
+	Spsel SPType // SP select
+	Fpca  bool   // FP extension enable
 }
 
 type Registers struct {
